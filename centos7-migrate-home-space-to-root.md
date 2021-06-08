@@ -4,7 +4,7 @@
 
 根目录的硬盘空间不够，需要从/home目录腾出空间给根目录。
 
-```bash
+```
 [root@localhost ~]# df -h
 文件系统                 容量  已用  可用 已用% 挂载点
 /dev/mapper/centos-root   36G   20G   17G   54% /
@@ -48,6 +48,10 @@ lvextend -r -l +100%FREE /dev/mapper/centos-root
 
 # 6. 恢复/home目录文件
 tar -xzvf /root/home.tgz -C /home
+
+# 7. 更新文件系统配置
+vi /etc/fstab
+# 如果删除了home卷，则需要注释或删除/dev/mapper/centos-home开头的行，否则将无法顺利开机
 ```
 
 至此，根目录空间扩大了，/home目录文件不变。
@@ -56,4 +60,11 @@ tar -xzvf /root/home.tgz -C /home
 [root@localhost ~]# df -h
 文件系统                 容量  已用  可用 已用% 挂载点
 /dev/mapper/centos-root   54G   20G   35G   36% /
+[root@localhost ~]# cat /etc/fstab
+/dev/mapper/centos-root /                       xfs     defaults        0 0
+UUID=d32c3ed5-79cc-4536-b3c8-4e084bc10dd7 /boot                   xfs     defaults        0 0
+#/dev/mapper/centos-home /home                   xfs     defaults        0 0
+/dev/mapper/centos-swap swap                    swap    defaults        0 0
 ```
+
+
